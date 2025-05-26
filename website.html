@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Portal</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      color: #fff;
+    }
+    .cursor-circle {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 255, 255, 0.6);
+      pointer-events: none;
+      mix-blend-mode: difference;
+      z-index: 9999;
+    }
+    .mesh-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/mesh.png');
+      opacity: 0.08;
+      z-index: 0;
+    }
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      z-index: 1;
+    }
+    h2 {
+      text-align: center;
+      color: #0ff;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    input {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    button {
+      background: #0ff;
+      color: #000;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00f0ff;
+    }
+    .file-upload {
+      margin-top: 15px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="mesh-bg"></div>
+  <div class="cursor-circle" id="cursor"></div>
+  <div class="container" id="auth-container">
+    <h2 id="form-title">Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <button onclick="toggleForm()">Create Account</button>
+    <input type="file" id="file-upload" class="file-upload hidden" />
+    <div id="file-info"></div>
+  </div>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = `${e.clientX - 10}px`;
+      cursor.style.top = `${e.clientY - 10}px`;
+    });
+
+    let isCreatingAccount = false;
+    const users = {};
+
+    function toggleForm() {
+      isCreatingAccount = !isCreatingAccount;
+      document.getElementById('form-title').innerText = isCreatingAccount ? 'Create Account' : 'Login';
+    }
+
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+
+      if (isCreatingAccount) {
+        if (users[user]) {
+          alert('User already exists!');
+        } else {
+          users[user] = pass;
+          alert('Account created! Now log in.');
+          toggleForm();
+        }
+      } else {
+        if (users[user] === pass) {
+          alert('Welcome, ' + user + '!');
+          document.getElementById('file-upload').classList.remove('hidden');
+        } else {
+          alert('Invalid login!');
+        }
+      }
+    }
+
+    document.getElementById('file-upload').addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const info = `Uploaded File: ${file.name} (${Math.round(file.size / 1024)} KB)`;
+        document.getElementById('file-info').innerText = info;
+      }
+    });
+  </script>
+</body>
+</html>
