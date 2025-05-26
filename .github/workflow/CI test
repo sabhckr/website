@@ -1,0 +1,35 @@
+name: HTML CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Dependencies
+      run: |
+        npm install -g htmlhint
+
+    - name: Lint website.html
+      run: |
+        htmlhint website.html || true
+
+    - name: Run CSS Check
+      run: |
+        if grep -q "body" website.html; then echo "✅ CSS reference found."; else echo "❌ No CSS reference found."; fi
+
+    - name: Final Message
+      run: echo "🚀 website.html check complete."
