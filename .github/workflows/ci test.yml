@@ -1,29 +1,25 @@
-name: Deploy Static Site to GitHub Pages
+name: HTML CI
 
 on:
   push:
-    branches:
-      - main  # Change this if your default branch is something else
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    paths:
+      - '**/*.html'
 
 jobs:
-  deploy:
+  validate-html:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload HTML files
-        uses: actions/upload-pages-artifact@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          path: .  # This will upload everything in your root folder
+          node-version: '18'
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      - name: Install html-validate
+        run: npm install -g html-validate
+
+      - name: Validate HTML files
+        run: html-validate "**/*.html"
